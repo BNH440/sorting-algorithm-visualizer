@@ -4,7 +4,7 @@ use std::{thread, time};
 
 // rand_array vars
 const MAX: i32 = 1000;
-const LEN: usize = 50;
+const LEN: usize = 30;
 
 fn rand_array() -> [f32; LEN] {
     // Generates a random array of (x, y) coordinates for the chart
@@ -26,7 +26,6 @@ fn delay(ms: u64) {
 
 fn max(vec: &[(f32, f32)]) -> f32 {
     // Gets the max value of a vector
-
     let mut max = 0f32;
     for i in 0..vec.len() {
         if vec[i].1 > max {
@@ -39,7 +38,7 @@ fn max(vec: &[(f32, f32)]) -> f32 {
 
 fn spacer(){
     // Prints a space in the terminal
-    print!("\x1B[2J");
+    print!("\x1B[2J\x1B[1;1H");
 }
 
 fn print_chart(vector: &[f32]) {
@@ -78,7 +77,7 @@ fn sort(vector: &mut [f32], sort_type: SortType) {
 
                 print_chart(&vector);
 
-                delay(200);
+                delay(100);
             }
         }
         SortType::Insertion => {
@@ -90,7 +89,7 @@ fn sort(vector: &mut [f32], sort_type: SortType) {
 
                     print_chart(&vector);
 
-                    delay(50);
+                    delay(25);
                 }
             }
         }
@@ -102,7 +101,7 @@ fn sort(vector: &mut [f32], sort_type: SortType) {
 
                         print_chart(&vector);
 
-                        delay(50);
+                        delay(25);
                     }
                 }
             }
@@ -118,22 +117,17 @@ fn main() {
     std::io::stdin().read_line(&mut input).unwrap();
 
     // Create new vector to hold numbers to be sorted
-    let mut vector: Vec<f32> = Vec::new();
+    let mut vector: Vec<f32>;
 
     // Parse user input
     if input.trim() == "random" {
         vector = Vec::from(rand_array());
     }
     else {
-        let numbers: Vec<i32> = input
+        vector = input
             .split_whitespace()
-            .map(|s| s.parse().expect("Error parsing input"))
+            .map(|s| s.parse::<f32>().expect("Error parsing input"))
             .collect();
-
-        // vector.push(0f32); // fix for the first bar
-        for i in 0..numbers.len() {
-            vector.push(numbers[i] as f32);
-        }
     }
 
     println!("Enter a sorting algorithm to use: ");
