@@ -3,8 +3,8 @@ use rand::{thread_rng, Rng};
 use std::{thread, time};
 
 // rand_array vars
-const MAX: i32 = 100;
-const LEN: usize = 40;
+const MAX: i32 = 1000;
+const LEN: usize = 50;
 
 fn rand_array() -> [f32; LEN] {
     // Generates a random array of (x, y) coordinates for the chart
@@ -53,7 +53,7 @@ fn print_chart(vector: &[f32]) {
 
 
     spacer();
-    Chart::new_with_y_range(180, 32, 0.0, (vector.len() - 1) as f32, 0.0, max(&new_vector))
+    Chart::new_with_y_range(250, 64, 0.0, (vector.len() - 1) as f32, 0.0, max(&new_vector))
         .lineplot(&Shape::Bars(&new_vector[..]))
         .nice();
 }
