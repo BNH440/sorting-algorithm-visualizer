@@ -7,16 +7,16 @@ const MAX: i32 = 1000;
 const LEN: usize = 30;
 
 fn rand_array() -> [f32; LEN] {
-    // Generates a random array of (x, y) coordinates for the chart
+    // Generates a random array of numbers to sort
     let mut rng = thread_rng();
 
-    let mut arr = [(0f32); LEN];
+    let mut number_list = [(0f32); LEN];
 
-    for i in 0..arr.len() {
-        arr[i] = rng.gen_range(0..MAX) as f32;
+    for i in 0..number_list.len() {
+        number_list[i] = rng.gen_range(0..MAX) as f32;
     }
 
-    return arr;
+    return number_list;
 }
 
 fn delay(ms: u64) {
@@ -41,19 +41,24 @@ fn spacer(){
     print!("\x1B[2J\x1B[1;1H");
 }
 
-fn print_chart(vector: &[f32]) {
-    let mut new_vector: Vec<(f32, f32)> = Vec::new();
+fn print_chart(number_list: &[f32]) {
+    // Print the bar chart to the terminal
 
-    new_vector.push((-1f32, 0f32));
+    // Create a vector of points to plot
+    let mut new_number_list: Vec<(f32, f32)> = Vec::new();
 
-    for i in 0..vector.len() {
-        new_vector.push((i as f32, vector[i]));
+    // Add a -1 to fix the chart
+    new_number_list.push((-1f32, 0f32));
+
+    // Add the points to the vector
+    for i in 0..number_list.len() {
+        new_number_list.push((i as f32, number_list[i]));
     }
 
 
     spacer();
-    Chart::new_with_y_range(250, 64, 0.0, (vector.len() - 1) as f32, 0.0, max(&new_vector))
-        .lineplot(&Shape::Bars(&new_vector[..]))
+    Chart::new_with_y_range(250, 64, 0.0, (number_list.len() - 1) as f32, 0.0, max(&new_number_list))
+        .lineplot(&Shape::Bars(&new_number_list[..]))
         .nice();
 }
 
@@ -63,43 +68,43 @@ enum SortType {
     Bubble,
 }
 
-fn sort(vector: &mut [f32], sort_type: SortType) {
+fn sort(number_list: &mut [f32], sort_type: SortType) {
     match sort_type {
         SortType::Selection => {
-            for i in 0..vector.len() {
+            for i in 0..number_list.len() {
                 let mut small = i;
-                for j in (i + 1)..vector.len() { // TODO: refactor this
-                    if vector[j] < vector[small] {
+                for j in (i + 1)..number_list.len() {
+                    if number_list[j] < number_list[small] {
                         small = j;
                     }
                 }
-                vector.swap(small, i);
+                number_list.swap(small, i);
 
-                print_chart(&vector);
+                print_chart(&number_list);
 
                 delay(100);
             }
         }
         SortType::Insertion => {
-            for i in 1..vector.len() {
+            for i in 1..number_list.len() {
                 let mut j = i;
-                while j > 0 && vector[j - 1] > vector[j] {
-                    vector.swap(j, j - 1);
+                while j > 0 && number_list[j - 1] > number_list[j] {
+                    number_list.swap(j, j - 1);
                     j -= 1;
 
-                    print_chart(&vector);
+                    print_chart(&number_list);
 
                     delay(25);
                 }
             }
         }
         SortType::Bubble => {
-            for i in 0..vector.len() {
-                for j in 0..(vector.len() - i - 1) {
-                    if vector[j] > vector[j + 1] {
-                        vector.swap(j, j + 1);
+            for i in 0..number_list.len() {
+                for j in 0..(number_list.len() - i - 1) {
+                    if number_list[j] > number_list[j + 1] {
+                        number_list.swap(j, j + 1);
 
-                        print_chart(&vector);
+                        print_chart(&number_list);
 
                         delay(25);
                     }
@@ -117,19 +122,22 @@ fn main() {
     std::io::stdin().read_line(&mut input).unwrap();
 
     // Create new vector to hold numbers to be sorted
-    let mut vector: Vec<f32>;
+    let mut number_list: Vec<f32>;
 
-    // Parse user input
+    // Handle user input
     if input.trim() == "random" {
-        vector = Vec::from(rand_array());
+        // Generate random number list
+        number_list = Vec::from(rand_array());
     }
     else {
-        vector = input
+        // Parse user input and add to number list
+        number_list = input
             .split_whitespace()
             .map(|s| s.parse::<f32>().expect("Error parsing input"))
             .collect();
     }
 
+    // Ask user what sorting algorithm to use
     println!("Enter a sorting algorithm to use: ");
     println!("1. Selection Sort");
     println!("2. Insertion Sort");
@@ -139,10 +147,11 @@ fn main() {
     let mut input = String::new();
     std::io::stdin().read_line(&mut input).unwrap();
 
+    // Parse user input and run the correct sorting algorithm
     match input.trim() {
-        "1" => sort(&mut vector, SortType::Selection),
-        "2" => sort(&mut vector, SortType::Insertion),
-        "3" => sort(&mut vector, SortType::Bubble),
+        "1" => sort(&mut number_list, SortType::Selection),
+        "2" => sort(&mut number_list, SortType::Insertion),
+        "3" => sort(&mut number_list, SortType::Bubble),
         _ => println!("Invalid input"),
     }
 }
