@@ -71,41 +71,68 @@ enum SortType {
 fn sort(number_list: &mut [f32], sort_type: SortType) {
     match sort_type {
         SortType::Selection => {
+            // Loop through every number in number_list
             for i in 0..number_list.len() {
+                // Set the current number as the smallest number
                 let mut small = i;
+
+                // Loop through every number but the current number
                 for j in (i + 1)..number_list.len() {
+                    // If the current number is smaller than the smallest number
                     if number_list[j] < number_list[small] {
+                        // Set the current number as the smallest
                         small = j;
                     }
                 }
+
+                // Swap the smallest number with the current number
                 number_list.swap(small, i);
 
+                // Print the new chart
                 print_chart(&number_list);
 
+                // Delay to give the user time to see the new chart
                 delay(100);
             }
         }
         SortType::Insertion => {
+            // Loop through every number in number_list
             for i in 1..number_list.len() {
+                // Set j to the current number
                 let mut j = i;
+
+                // While j is greater than 0 and the number before j is greater than j
                 while j > 0 && number_list[j - 1] > number_list[j] {
+
+                    // Shift j in the list by swapping the numbers
                     number_list.swap(j, j - 1);
+
+                    // Decrement j
                     j -= 1;
 
+                    // Print the new chart
                     print_chart(&number_list);
 
+                    // Delay to give the user time to see the new chart
                     delay(25);
                 }
             }
         }
         SortType::Bubble => {
+            // Bubble sort
+            // Loop through every number in number_list
             for i in 0..number_list.len() {
+                // for j in number list but the last number and the current number
                 for j in 0..(number_list.len() - i - 1) {
+                    // If the current number is greater than the next number
                     if number_list[j] > number_list[j + 1] {
+                        // Swap the numbers
                         number_list.swap(j, j + 1);
 
+                        // Print the new chart
                         print_chart(&number_list);
 
+                        // Delay to give the user time to see the new chart
                         delay(25);
                     }
                 }
